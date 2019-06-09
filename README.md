@@ -33,3 +33,7 @@ $ npm run generate
 
 ```
 
+# knowledge
+```
+koa-passport
+```

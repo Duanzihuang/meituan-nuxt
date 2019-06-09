@@ -3,6 +3,7 @@ const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 
 const cityInterface = require('./interface/city')
+import users from './interface/users'
 
 const app = new Koa()
 
@@ -29,6 +30,7 @@ async function start() {
 
   // 集成路由
   app.use(cityInterface.routes()).use(cityInterface.allowedMethods())
+  // app.use(users.routes,users.allowedMethods())
 
   app.use(ctx => {
     ctx.status = 200
