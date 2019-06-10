@@ -1,11 +1,35 @@
 const Koa = require('koa')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
+import mongoose from 'mongoose'
+import bodyParser from 'koa-bodyparser'
+import session from 'koa-generic-session'
+import Redis from 'koa-redis'
+// 格式化json
+import json from 'koa-json'
+import dbConfig from './dbs/config'
+import passport from './interface/utils/passport'
 
-const cityInterface = require('./interface/city')
+// const cityInterface = require('./interface/city')
 import users from './interface/users'
 
 const app = new Koa()
+
+app.keys = ['mt','keyskeys']
+app.proxy = true
+app.use(session({key:'mt',prefix:'mt:uid',store:new Redis()}))
+app.use(bodyParser({
+  extendTypes:['json','form','text']
+}))
+app.use(json())
+
+// 连接数据库
+mongoose.connect(dbConfig.dbs,{
+  useNewUrlParser:true
+})
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
@@ -29,8 +53,9 @@ async function start() {
   }
 
   // 集成路由
-  app.use(cityInterface.routes()).use(cityInterface.allowedMethods())
+  // app.use(cityInterface.routes()).use(cityInterface.allowedMethods())
   // app.use(users.routes,users.allowedMethods())
+  app.use(users.routes()).use(users.allowedMethods())
 
   app.use(ctx => {
     ctx.status = 200

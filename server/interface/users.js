@@ -32,12 +32,16 @@ router.post('/signup',async ctx => {
         code:-1,
         msg:'请填写正确的验证码'
       }
+
+      return false
     }
   } else {
     ctx.body = {
       code: -1,
       msg:'请填写验证码'
     }
+
+    return false
   }
 
   const user = await User.find({username})
@@ -58,7 +62,7 @@ router.post('/signup',async ctx => {
       ctx.body = {
         code: 0,
         msg: '注册成功',
-        user:red.data.user
+        user:res.data.user
       }
     } else {
       ctx.body = {
@@ -103,7 +107,7 @@ router.post('/signin',async (ctx,next) => {
 
 router.post('/verify',async (ctx,next) => {
   const username = ctx.request.body.username
-  const saveExpire = await Store.hget('nodemail:${username}','expire')
+  const saveExpire = await Store.hget(`nodemail:${username}`,'expire')
   if (saveExpire && new Date().getTime() - saveExpire < 0){
     ctx.body = {
       code:-1,
@@ -114,7 +118,7 @@ router.post('/verify',async (ctx,next) => {
   }
 
   const transporter = nodeMailer.createTransport({
-    service: '11',
+    service: 'qq',
     auth:{
       user:Email.smtp.user,
       pass:Email.smtp.pass
@@ -135,9 +139,11 @@ router.post('/verify',async (ctx,next) => {
     html:`您的验证码是 ${ko.code}`
   }
 
+  console.log(mailOptions)
+
   await transporter.sendMail(mailOptions,(error,info) => {
     if (error) {
-      return console.log(error)
+      console.log(error)
     } else {
       Store.hmset(`nodemail:${ko.user}`,'code',ko.code,'expire', ko.expire, 'email', ko.email)
     }

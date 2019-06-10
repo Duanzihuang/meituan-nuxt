@@ -37,3 +37,12 @@ $ npm run generate
 ```
 koa-passport
 ```
+
+### Redis
+
+> 开启Redis服务
+
+```
+redis-server
+```
+
