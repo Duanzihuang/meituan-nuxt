@@ -12,6 +12,7 @@ import passport from './interface/utils/passport'
 
 // const cityInterface = require('./interface/city')
 import users from './interface/users'
+import geo from './interface/geo'
 
 const app = new Koa()
 
@@ -56,6 +57,7 @@ async function start() {
   // app.use(cityInterface.routes()).use(cityInterface.allowedMethods())
   // app.use(users.routes,users.allowedMethods())
   app.use(users.routes()).use(users.allowedMethods())
+  app.use(geo.routes(),geo.allowedMethods())
 
   app.use(ctx => {
     ctx.status = 200
