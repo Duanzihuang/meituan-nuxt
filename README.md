@@ -46,3 +46,9 @@ koa-passport
 redis-server
 ```
 
+### MongoDB
+
+> 导入
+
+ mongoimport -d 数据库名 -c 集合名  文件名称.dat
+

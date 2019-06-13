@@ -8,14 +8,14 @@
       </el-col>
       <el-col :span="15" class="center">
         <div class="wrapper">
-          <el-input v-model="search" @focus="focus" @blur="blur" placeholder="搜索商家或地点"/>
+          <el-input v-model="search" @focus="focus" @input="input" @blur="blur" placeholder="搜索商家或地点"/>
           <button class="el-button el-button--primary"><i class="el-icon-search"/></button>
           <dl v-if="isHotPlace" class="hotPlace">
             <dt>热门搜索</dt>
-            <dd v-for="item in hotPlace" :key="item">{{item}}</dd>
+            <dd v-for="item in $store.getters['geo/getHotPlace']" :key="item.id">{{item.name}}</dd>
           </dl>
           <dl v-if="isSearchList" class="searchList">
-            <dd v-for="item in searchList" :key="item">{{item}}</dd>
+            <dd v-for="item in searchList" :key="item.name">{{item.name}}</dd>
           </dl>
         </div>
         <p class="suggest">
@@ -56,13 +56,13 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   data(){
     return {
       isFocus:false,
       search:'',
-      hotPlace:['火锅','火锅','火锅','火锅','火锅'],
-      searchList:['故宫博物院','故宫博物院','故宫博物院','故宫博物院']
+      searchList:[]
     }
   },
   computed:{
@@ -79,7 +79,17 @@ export default {
     },
     blur(){
       this.isFocus = false
-    }
+    },
+    input:_.debounce(async () => {
+      const {status,data:{results}} = await this.$axios.get('/search/top',{
+        params:{
+          name:this.search,
+          city:this.$store.getters['geo/getCity']
+        }
+      })
+
+      this.searchList = results
+    })
   }
 }
 </script>
