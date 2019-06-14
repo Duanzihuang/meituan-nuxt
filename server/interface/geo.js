@@ -64,7 +64,13 @@ router.get('/cities',async ctx => {
     cities = cities.concat(item.value)
   })
   ctx.body = {
-    cities
+    cities:cities.map(item => {
+      return {
+        province:item.province,
+        id:item.id,
+        name:item.name === '市辖区' ? item.province : item.name
+      }
+    })
   }
 })
 
